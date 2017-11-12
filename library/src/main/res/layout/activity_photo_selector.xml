@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.ppyy.photoselector.widget.SlidingUpPanelLayout
+        android:id="@+id/sliding_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        app:umanoDragView="@+id/ll_drag_view"
+        app:umanoInitialState="collapsed"
+        app:umanoPanelHeight="0dp"
+        app:umanoScrollableView="@+id/rv_list">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:focusable="false"
+            android:focusableInTouchMode="true"/>
+
+        <LinearLayout
+            android:id="@+id/ll_drag_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#f8f8f8"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_list"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+        </LinearLayout>
+    </com.ppyy.photoselector.widget.SlidingUpPanelLayout>
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <View
+            android:id="@+id/status_bar"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/tool_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:contentInsetStartWithNavigation="0dp"
+            app:theme="@style/AppTheme.AppBarOverlay">
+
+            <TextView
+                android:id="@+id/tv_selected_folder"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:drawableEnd="@drawable/ic_arrow_drop_down_white_24dp"
+                android:drawableRight="@drawable/ic_arrow_drop_down_white_24dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:lines="1"
+                android:maxWidth="@dimen/main_spinner_max_width"
+                android:paddingEnd="8dp"
+                android:paddingStart="8dp"
+                android:text="CircleImage"
+                android:textColor="#ffffff"
+                android:textSize="18sp"
+                tools:ignore="RtlHardcoded"/>
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
+
+    <!--<RelativeLayout
+        android:id="@+id/rl_container"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_gravity="bottom"
+        android:background="#cfff"
+        android:clickable="true">
+
+        <TextView
+            android:id="@+id/tv_selected_folder"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:drawableEnd="@mipmap/ic_arrow_drop_down_white_24dp"
+            android:drawableRight="@mipmap/ic_arrow_drop_down_white_24dp"
+            android:drawableTint="#333"
+            android:gravity="center"
+            android:lines="1"
+            android:maxEms="12"
+            android:paddingEnd="8dp"
+            android:paddingStart="8dp"
+            android:text="CameraImage"
+            android:textColor="#333333"
+            android:textSize="18sp"
+            tools:drawableTint="#f00"
+            tools:text="全部"/>
+    </RelativeLayout>-->
+</FrameLayout>

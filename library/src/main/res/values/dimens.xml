@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="title_bar_center_text_size">18sp</dimen>
+
+    <dimen name="folder_item_height">72dp</dimen>
+    <dimen name="main_spinner_max_width">144dp</dimen>
+</resources>

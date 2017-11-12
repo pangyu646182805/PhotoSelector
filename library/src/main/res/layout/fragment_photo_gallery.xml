@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="#33000000">
+
+    <me.xiaopan.sketch.SketchImageView
+        android:id="@+id/iv_img"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/iv_play"
+        android:layout_width="84dp"
+        android:layout_height="84dp"
+        android:padding="12dp"
+        android:layout_gravity="center"
+        app:srcCompat="@drawable/ic_play"
+        tools:ignore="VectorDrawableCompat"/>
+</FrameLayout>

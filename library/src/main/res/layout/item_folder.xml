@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/folder_item_height"
+    tools:background="#33000000">
+
+    <me.xiaopan.sketch.SketchImageView
+        android:id="@+id/iv_cover"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        tools:ignore="RtlHardcoded"
+        tools:src="@drawable/ic_audio"/>
+
+    <FrameLayout
+        android:id="@+id/fl_selected_hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="12dp"
+        android:layout_marginRight="12dp"
+        tools:ignore="RtlHardcoded">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:background="@drawable/shape_red_circle"
+            android:visibility="visible"/>
+
+        <TextView
+            android:id="@+id/tv_selected_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:includeFontPadding="false"
+            android:textColor="#fff"
+            android:textSize="8sp"
+            android:textStyle="bold"
+            tools:ignore="SmallSp"
+            tools:text="12"/>
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tv_folder_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/iv_cover"
+        android:layout_marginEnd="12dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginStart="8dp"
+        android:layout_toEndOf="@id/iv_cover"
+        android:layout_toLeftOf="@+id/fl_selected_hint"
+        android:layout_toRightOf="@id/iv_cover"
+        android:layout_toStartOf="@+id/fl_selected_hint"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="#333"
+        android:textSize="16sp"
+        tools:ignore="RtlHardcoded"
+        tools:text="DCIM"/>
+
+    <TextView
+        android:id="@+id/tv_folder_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/tv_folder_name"
+        android:layout_alignStart="@id/tv_folder_name"
+        android:layout_below="@id/tv_folder_name"
+        android:layout_marginTop="4dp"
+        android:layout_toEndOf="@id/iv_cover"
+        android:layout_toRightOf="@id/iv_cover"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="#666"
+        android:textSize="14sp"
+        tools:ignore="RtlHardcoded"
+        tools:text="25"/>
+</RelativeLayout>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3585de</color>
+    <color name="colorPrimaryDark">#308df5</color>
+
+    <color name="transparent">#00000000</color>
+
+    <color name="image_overlay_true">#80000000</color>
+    <color name="image_overlay_false">#20000000</color>
+</resources>
