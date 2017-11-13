@@ -7,4 +7,16 @@
 
     <color name="image_overlay_true">#80000000</color>
     <color name="image_overlay_false">#20000000</color>
+
+    <color name="popup_bg_dark">#3c3f41</color>
+    <color name="popup_bg_light">#ffffff</color>
+
+    <color name="popup_title_color_dark">#deffffff</color>
+    <color name="popup_count_color_dark">#89ffffff</color>
+
+    <color name="popup_title_color_light">#de000000</color>
+    <color name="popup_count_color_light">#999999</color>
+
+    <color name="page_bg_dark">#3c3f41</color>
+    <color name="page_bg_light">#ffffff</color>
 </resources>

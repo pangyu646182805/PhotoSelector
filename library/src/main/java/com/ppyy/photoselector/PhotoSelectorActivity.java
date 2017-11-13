@@ -64,6 +64,9 @@ public class PhotoSelectorActivity extends AppCompatActivity implements MediaLoa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_selector);
         StatusBarUtils.immersiveStatusBar(this);
+        if (mOptions.supportDarkStatusBar) {
+            StatusBarUtils.setStatusBarDarkMode(this);
+        }
         initView(savedInstanceState);
         initListener();
 
@@ -114,7 +117,7 @@ public class PhotoSelectorActivity extends AppCompatActivity implements MediaLoa
         // mRvList.setLayoutFrozen(true);
         mRvList.setHasFixedSize(true);
         mRvList.setLayoutManager(new GridLayoutManager(this, mOptions.gridSize));
-        mRvList.addItemDecoration(new SpacesItemDecoration(SizeUtils.dp2px(this, 1), mOptions.gridSize));
+        mRvList.addItemDecoration(new SpacesItemDecoration(SizeUtils.dp2px(this, 2), mOptions.gridSize));
         mMediaAdapter = new MediaAdapter(this, mRvList);
         mRvList.setAdapter(mMediaAdapter);
 

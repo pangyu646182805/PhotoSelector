@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -7,27 +8,53 @@
         <item name="colorAccent">@color/colorPrimary</item>
     </style>
 
-    <style name="AppTheme.NoActionBar" parent="AppTheme">
+    <style name="PhotoSelectorTheme" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowTranslucentStatus">true</item>
-    </style>
-
-    <style name="AppTheme.NoActionBar.Translate">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@color/transparent</item>
         <item name="android:windowAnimationStyle">@android:style/Animation</item>
+        <item name="toolbar">@style/ToolBar.Dark</item>
+        <item name="android:listPopupWindowStyle">@style/Popup.Light</item>
+        <item name="listPopupWindowStyle">@style/Popup.Light</item>
+        <item name="listPopupWindow.element.color">@android:color/white</item>
+        <item name="listPopupWindow.title.color">@color/popup_title_color_light</item>
+        <item name="listPopupWindow.count.color">@color/popup_count_color_light</item>
+        <item name="page.bg">@color/page_bg_light</item>
+        <item name="item.placeholder.bg">@android:color/white</item>
     </style>
 
-    <style name="AppTheme.NoActionBar.Translate.Red" parent="AppTheme.NoActionBar.Translate">
-        <item name="colorPrimary">#f00</item>
-        <item name="colorPrimaryDark">#f00</item>
-        <item name="colorAccent">#f00</item>
+    <!-- 夜间模式 -->
+    <style name="PhotoSelectorTheme.Night" parent="PhotoSelectorTheme">
+        <item name="colorPrimary">#FF2B2B2B</item>
+        <item name="colorPrimaryDark">#FF2B2B2B</item>
+        <item name="colorAccent">#3c3f41</item>
+        <item name="toolbar">@style/ToolBar.Dark</item>
+        <item name="android:listPopupWindowStyle">@style/Popup.Dark</item>
+        <item name="listPopupWindowStyle">@style/Popup.Dark</item>
+        <item name="listPopupWindow.element.color">@android:color/white</item>
+        <item name="listPopupWindow.title.color">@color/popup_title_color_dark</item>
+        <item name="listPopupWindow.count.color">@color/popup_count_color_dark</item>
+        <item name="page.bg">@color/page_bg_dark</item>
+        <item name="item.placeholder.bg">@android:color/black</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+    <!-- 深颜色的ToolBar -->
+    <style name="ToolBar.Dark" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+    <!-- 浅颜色的ToolBar -->
+    <style name="ToolBar.Light" parent="ThemeOverlay.AppCompat.ActionBar"/>
+
+    <!-- Popup的背景颜色 -->
+    <style name="Popup.Dark" parent="Widget.AppCompat.ListPopupWindow">
+        <item name="android:popupBackground">@color/popup_bg_dark</item>
+    </style>
+
+    <!-- Popup的背景颜色 -->
+    <style name="Popup.Light" parent="Widget.AppCompat.ListPopupWindow">
+        <item name="android:popupBackground">@color/popup_bg_light</item>
+    </style>
+
+    <!--<style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>-->
 </resources>

@@ -19,4 +19,12 @@
         </attr>
         <attr name="umanoScrollInterpolator" format="reference"/>
     </declare-styleable>
+
+    <attr name="toolbar" format="reference"/>
+    <attr name="listPopupWindowStyle" format="reference"/>
+    <attr name="listPopupWindow.element.color" format="reference"/>
+    <attr name="listPopupWindow.title.color" format="reference|color"/>
+    <attr name="listPopupWindow.count.color" format="reference|color"/>
+    <attr name="page.bg" format="reference|color"/>
+    <attr name="item.placeholder.bg" format="reference|color"/>
 </resources>

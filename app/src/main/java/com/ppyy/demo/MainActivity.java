@@ -1,14 +1,12 @@
 package com.ppyy.demo;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -28,16 +26,36 @@ import butterknife.OnClick;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, RadioGroup.OnCheckedChangeListener {
     private static final int REQUEST_CODE_CHOOSE = 11;
 
+    @BindView(R.id.rg_theme)
+    RadioGroup mRgTheme;
+    /*@BindView(R.id.rb_theme_default)
+    RadioButton mRbThemeDefault;
+    @BindView(R.id.rb_theme_zhihu_blue)
+    RadioButton mRbThemeZhihuBlue;
+    @BindView(R.id.rb_theme_bilibili_pink)
+    RadioButton mRbThemeBiliPink;
+    @BindView(R.id.rb_theme_wumai_grey)
+    RadioButton mRbThemeWumaiGrey;
+    @BindView(R.id.rb_theme_wangyi_red)
+    RadioButton mRbThemeWangyiRed;
+    @BindView(R.id.rb_theme_today_white)
+    RadioButton mRbThemeTodayWhite;
+    @BindView(R.id.rb_theme_night_mode)
+    RadioButton mRbThemeNightMode;*/
+
     @BindView(R.id.rg_type)
     RadioGroup mRgGroup;
-    @BindView(R.id.rb_all)
+    /*@BindView(R.id.rb_all)
     RadioButton mRbAll;
     @BindView(R.id.rb_photo)
     RadioButton mRbPhoto;
     @BindView(R.id.rb_video)
     RadioButton mRbVideo;
     @BindView(R.id.rb_audio)
-    RadioButton mRbAudio;
+    RadioButton mRbAudio;*/
+
+    @BindView(R.id.cb_support_dark_status_bar)
+    CheckBox mCbSupportDarkStatusBar;
 
     @BindView(R.id.btn_span_count_cut)
     Button mBtnSpanCountCut;
@@ -66,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     CheckBox mCbCanceledOnTouchOutside;
 
     private int mChooseMode = MimeType.ALL;
+    private int mThemeId = R.style.PhotoSelectorTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mBtnSpanCountAdd.setOnClickListener(this);
         mBtnSpanCountCut.setOnClickListener(this);
         mRgGroup.setOnCheckedChangeListener(this);
+        mRgTheme.setOnCheckedChangeListener(this);
 
         mCbSingleMode.setOnCheckedChangeListener(this);
         mCbShowGif.setOnCheckedChangeListener(this);
@@ -127,13 +147,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // startActivity(new Intent(this, PhotoSelectorActivity.class));
         MediaSelector.from(this)
                 .choose(mChooseMode)
-                .themeId(R.style.AppTheme_NoActionBar_Translate_Green)
+                .themeId(mThemeId)
+                .supportDarkStatusBar(mCbSupportDarkStatusBar.isChecked())
                 .maxSelectable(getMaxSelectable())
                 .gridSize(getSpanCount())
                 .showGif(mCbShowGif.isChecked())
                 .showGifFlag(mCbShowGifFlag.isChecked() && mCbShowGifFlag.isEnabled())
                 // .setGifFlagResId(R.drawable.ic_gif_custom)
-                .setBackgroundColor(Color.WHITE)
                 .showHeaderItem(mCbShowHeaderItem.isChecked())
                 .setCanceledOnTouchOutside(mCbCanceledOnTouchOutside.isChecked())
                 .customViewHolder(new SketchViewHolderCreator())
@@ -154,6 +174,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.rb_audio:
                 mChooseMode = MimeType.AUDIO;
+                break;
+            case R.id.rb_theme_default:
+                mThemeId = R.style.PhotoSelectorTheme;
+                mCbSupportDarkStatusBar.setChecked(false);
+                break;
+            case R.id.rb_theme_bilibili_pink:
+                mThemeId = R.style.PhotoSelectorTheme_BiliBiliPink;
+                mCbSupportDarkStatusBar.setChecked(false);
+                break;
+            case R.id.rb_theme_wangyi_red:
+                mThemeId = R.style.PhotoSelectorTheme_WangYiRed;
+                mCbSupportDarkStatusBar.setChecked(false);
+                break;
+            case R.id.rb_theme_wumai_grey:
+                mThemeId = R.style.PhotoSelectorTheme_WuMaiGrey;
+                mCbSupportDarkStatusBar.setChecked(false);
+                break;
+            case R.id.rb_theme_today_white:
+                mThemeId = R.style.PhotoSelectorTheme_TodayWhite;
+                if (!mCbSupportDarkStatusBar.isChecked()) mCbSupportDarkStatusBar.setChecked(true);
+                break;
+            case R.id.rb_theme_night_mode:
+                mThemeId = R.style.PhotoSelectorTheme_Night;
+                mCbSupportDarkStatusBar.setChecked(false);
                 break;
         }
     }

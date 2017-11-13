@@ -92,7 +92,6 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             /*return new MediaContentViewHolder(
                     LayoutInflater.from(parent.getContext()).inflate(R.layout.item_media_content, parent, false));*/
             View mediaContentView = LayoutInflater.from(mContext).inflate(R.layout.item_media_content, parent, false);
-            mediaContentView.setBackgroundColor(mOptions.backgroundColor);
             final MediaContentViewHolder mediaContentViewHolder = new MediaContentViewHolder(mediaContentView);
             mediaContentView.setOnClickListener(new View.OnClickListener() {
                 @Override

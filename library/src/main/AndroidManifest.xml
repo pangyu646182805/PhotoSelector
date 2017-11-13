@@ -1,5 +1,5 @@
-<manifest package="com.ppyy.photoselector"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.ppyy.photoselector">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -8,13 +8,13 @@
         <activity
             android:name=".PhotoSelectorActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar.Translate">
+            android:theme="@style/PhotoSelectorTheme">
         </activity>
 
         <activity
             android:name=".PhotoGalleryActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/PhotoSelectorTheme">
         </activity>
     </application>
 </manifest>

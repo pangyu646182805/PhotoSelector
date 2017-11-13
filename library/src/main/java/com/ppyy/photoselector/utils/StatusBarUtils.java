@@ -1,11 +1,13 @@
 package com.ppyy.photoselector.utils;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.FloatRange;
 import android.support.v4.view.ViewCompat;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -13,6 +15,10 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.ppyy.photoselector.R;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.regex.Pattern;
 
 /**
  * Created by Administrator on 2017/11/10.
@@ -119,5 +125,111 @@ public class StatusBarUtils {
             result = context.getResources().getDimensionPixelSize(resId);
         }
         return result;
+    }
+
+    /**
+     * 设置状态栏darkMode,字体颜色及icon变黑(目前支持MIUI6以上,Flyme4以上,Android M以上)
+     */
+    public static void setStatusBarDarkMode(Activity activity) {
+        setStatusBarDarkMode(activity.getWindow());
+    }
+
+    /**
+     * 设置状态栏darkMode,字体颜色及icon变黑(目前支持MIUI6以上,Flyme4以上,Android M以上)
+     */
+    public static void setStatusBarDarkMode(Window window) {
+        if (isFlyme4Later()) {
+            setStatusBarDarkModeForFlyme4(window, true);
+        } else if (isMIUI6Later()) {
+            setStatusBarDarkModeForMIUI6(window, true);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            setStatusBarDarkModeForM(window);
+        }
+    }
+
+    /**
+     * 判断是否Flyme4以上
+     */
+    public static boolean isFlyme4Later() {
+        return Build.FINGERPRINT.contains("Flyme_OS_4")
+                || Build.VERSION.INCREMENTAL.contains("Flyme_OS_4")
+                || Pattern.compile("Flyme OS [4|5]", Pattern.CASE_INSENSITIVE).matcher(Build.DISPLAY).find();
+    }
+
+    /**
+     * 判断是否为MIUI6以上
+     */
+    public static boolean isMIUI6Later() {
+        try {
+            Class<?> clz = Class.forName("android.os.SystemProperties");
+            Method mtd = clz.getMethod("get", String.class);
+            String val = (String) mtd.invoke(null, "ro.miui.ui.version.name");
+            val = val.replaceAll("[vV]", "");
+            int version = Integer.parseInt(val);
+            return version >= 6;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * 设置Flyme4+的darkMode,darkMode时候字体颜色及icon变黑
+     * http://open-wiki.flyme.cn/index.php?title=Flyme%E7%B3%BB%E7%BB%9FAPI
+     */
+    public static boolean setStatusBarDarkModeForFlyme4(Window window, boolean dark) {
+        boolean result = false;
+        if (window != null) {
+            try {
+                WindowManager.LayoutParams e = window.getAttributes();
+                Field darkFlag = WindowManager.LayoutParams.class.getDeclaredField("MEIZU_FLAG_DARK_STATUS_BAR_ICON");
+                Field meizuFlags = WindowManager.LayoutParams.class.getDeclaredField("meizuFlags");
+                darkFlag.setAccessible(true);
+                meizuFlags.setAccessible(true);
+                int bit = darkFlag.getInt(null);
+                int value = meizuFlags.getInt(e);
+                if (dark) {
+                    value |= bit;
+                } else {
+                    value &= ~bit;
+                }
+
+                meizuFlags.setInt(e, value);
+                window.setAttributes(e);
+                result = true;
+            } catch (Exception var8) {
+                Log.e("StatusBar", "setStatusBarDarkIcon: failed");
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 设置MIUI6+的状态栏是否为darkMode,darkMode时候字体颜色及icon变黑
+     * http://dev.xiaomi.com/doc/p=4769/
+     */
+    public static void setStatusBarDarkModeForMIUI6(Window window, boolean darkmode) {
+        Class<? extends Window> clazz = window.getClass();
+        try {
+            int darkModeFlag = 0;
+            Class<?> layoutParams = Class.forName("android.view.MiuiWindowManager$LayoutParams");
+            Field field = layoutParams.getField("EXTRA_FLAG_STATUS_BAR_DARK_MODE");
+            darkModeFlag = field.getInt(layoutParams);
+            Method extraFlagField = clazz.getMethod("setExtraFlags", int.class, int.class);
+            extraFlagField.invoke(window, darkmode ? darkModeFlag : 0, darkModeFlag);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /** android 6.0设置字体颜色 */
+    @TargetApi(Build.VERSION_CODES.M)
+    public static void setStatusBarDarkModeForM(Window window) {
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(Color.TRANSPARENT);
+
+        int systemUiVisibility = window.getDecorView().getSystemUiVisibility();
+        systemUiVisibility |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+        window.getDecorView().setSystemUiVisibility(systemUiVisibility);
     }
 }

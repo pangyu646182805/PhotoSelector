@@ -2,7 +2,6 @@ package com.ppyy.photoselector;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.StyleRes;
 import android.support.v4.app.Fragment;
@@ -55,6 +54,14 @@ public final class SelectionCreator {
     }
 
     /**
+     * 是否支持暗色状态栏
+     */
+    public SelectionCreator supportDarkStatusBar(boolean supportDarkStatusBar) {
+        mOptions.supportDarkStatusBar = supportDarkStatusBar;
+        return this;
+    }
+
+    /**
      * 是否展示gif图片
      */
     public SelectionCreator showGif(boolean showGif) {
@@ -75,11 +82,6 @@ public final class SelectionCreator {
      */
     public SelectionCreator setGifFlagResId(@DrawableRes int gifFlagResId) {
         mOptions.gifFlagResId = gifFlagResId;
-        return this;
-    }
-
-    public SelectionCreator setBackgroundColor(@ColorInt int backgroundColor) {
-        mOptions.backgroundColor = backgroundColor;
         return this;
     }
 

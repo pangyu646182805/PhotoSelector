@@ -27,7 +27,7 @@
             android:id="@+id/ll_drag_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#f8f8f8"
+            android:background="?attr/page.bg"
             android:orientation="vertical">
 
             <android.support.v7.widget.RecyclerView
@@ -53,7 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:contentInsetStartWithNavigation="0dp"
-            app:theme="@style/AppTheme.AppBarOverlay">
+            app:theme="?toolbar">
 
             <TextView
                 android:id="@+id/tv_selected_folder"
@@ -75,33 +75,4 @@
                 tools:ignore="RtlHardcoded"/>
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
-
-    <!--<RelativeLayout
-        android:id="@+id/rl_container"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_gravity="bottom"
-        android:background="#cfff"
-        android:clickable="true">
-
-        <TextView
-            android:id="@+id/tv_selected_folder"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:drawableEnd="@mipmap/ic_arrow_drop_down_white_24dp"
-            android:drawableRight="@mipmap/ic_arrow_drop_down_white_24dp"
-            android:drawableTint="#333"
-            android:gravity="center"
-            android:lines="1"
-            android:maxEms="12"
-            android:paddingEnd="8dp"
-            android:paddingStart="8dp"
-            android:text="CameraImage"
-            android:textColor="#333333"
-            android:textSize="18sp"
-            tools:drawableTint="#f00"
-            tools:text="全部"/>
-    </RelativeLayout>-->
 </FrameLayout>

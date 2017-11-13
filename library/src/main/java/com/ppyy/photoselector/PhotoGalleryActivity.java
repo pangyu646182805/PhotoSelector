@@ -44,9 +44,14 @@ public class PhotoGalleryActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        mOptions = SelectionOptions.getOptions();
+        setTheme(mOptions.themeId);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_gallery);
         StatusBarUtils.immersiveStatusBar(this);
+        if (mOptions.supportDarkStatusBar) {
+            StatusBarUtils.setStatusBarDarkMode(this);
+        }
         mVpPreview = findViewById(R.id.vp_preview);
         mAppBarLayout = findViewById(R.id.app_bar);
         mStatusBar = findViewById(R.id.status_bar);
@@ -58,7 +63,6 @@ public class PhotoGalleryActivity extends AppCompatActivity
         setDisplayHomeAsUpEnabled();
         setToolbarTitle("");
 
-        mOptions = SelectionOptions.getOptions();
         mDataTransferStation = DataTransferStation.getInstance();
 
         initViewPager();

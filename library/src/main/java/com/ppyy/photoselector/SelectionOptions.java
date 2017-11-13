@@ -1,7 +1,5 @@
 package com.ppyy.photoselector;
 
-import android.graphics.Color;
-import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.StyleRes;
 
@@ -18,12 +16,11 @@ public class SelectionOptions {
     public int themeId;
     public int maxSelectable = 1;  // 最多选择数量
     public int gridSize = 3;  // RecyclerView显示网格大小
+    public boolean supportDarkStatusBar;  // 是否支持暗色状态栏
     public boolean showGif;  // 是否显示gif图片
     public boolean showGifFlag;  // 是否显示gif标志
     @DrawableRes
     public int gifFlagResId = R.drawable.ic_gif_flag;  // gif标志resId
-    @ColorInt
-    public int backgroundColor = Color.WHITE;  // 图片的背景颜色 默认白色
     public boolean showHeaderItem = true;  // 是否展示PhotoSelector第一项(即拍照item)
     public boolean canceledOnTouchOutside = true;  // 是否点击空白区域取消PhotoSelector
 
@@ -46,10 +43,10 @@ public class SelectionOptions {
         mimeType = MimeType.PHOTO;
         maxSelectable = 1;
         gridSize = 3;
+        supportDarkStatusBar = false;
         showGif = false;
         showGifFlag = false;
         gifFlagResId = R.drawable.ic_gif_flag;
-        backgroundColor = Color.WHITE;
         showHeaderItem = true;
         canceledOnTouchOutside = true;
     }

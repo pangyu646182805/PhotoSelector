@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?attr/item.placeholder.bg">
 
     <!--<me.xiaopan.sketch.SketchImageView
         android:id="@id/iv_img"
@@ -30,7 +31,8 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_margin="4dp"
-            app:srcCompat="@drawable/ic_uncheck"/>
+            app:srcCompat="@drawable/ic_uncheck"
+            tools:ignore="VectorDrawableCompat"/>
     </LinearLayout>
 
     <android.support.v7.widget.AppCompatImageView
@@ -39,7 +41,8 @@
         android:layout_height="24dp"
         android:layout_gravity="right|bottom"
         android:visibility="gone"
-        app:srcCompat="@drawable/ic_gif_flag"/>
+        app:srcCompat="@drawable/ic_gif_flag"
+        tools:ignore="VectorDrawableCompat"/>
 
     <LinearLayout
         android:id="@+id/ll_bottom"
@@ -57,7 +60,8 @@
             android:id="@+id/iv_type"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            app:srcCompat="@drawable/ic_video"/>
+            app:srcCompat="@drawable/ic_video"
+            tools:ignore="VectorDrawableCompat"/>
 
         <TextView
             android:id="@+id/tv_duration"

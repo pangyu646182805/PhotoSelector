@@ -2,6 +2,9 @@ package com.ppyy.photoselector;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.ListPopupWindow;
 import android.view.View;
@@ -35,7 +38,7 @@ public class MediaFolderSpinner {
     }
 
     public MediaFolderSpinner(@NonNull Context context) {
-        mListPopupWindow = new ListPopupWindow(context);
+        mListPopupWindow = new ListPopupWindow(context, null, R.attr.listPopupWindowStyle);
         mListPopupWindow.setModal(true);
         float density = context.getResources().getDisplayMetrics().density;
         mListPopupWindow.setContentWidth((int) (216 * density));
@@ -67,6 +70,19 @@ public class MediaFolderSpinner {
     @SuppressLint("ClickableViewAccessibility")
     public void setSelectedTextView(TextView tv) {
         mSelectedTextView = tv;
+
+        // tint selectedTextView
+        Drawable[] drawables = mSelectedTextView.getCompoundDrawables();
+        Drawable right = drawables[2];
+        if (right != null) {
+            TypedArray ta = mSelectedTextView.getContext().getTheme().obtainStyledAttributes(
+                    new int[]{R.attr.listPopupWindow_element_color});
+            int color = ta.getColor(0, 0);
+            ta.recycle();
+            right.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            mSelectedTextView.setTextColor(color);
+        }
+
         mSelectedTextView.setVisibility(View.GONE);
         mSelectedTextView.setOnClickListener(new View.OnClickListener() {
             @Override
