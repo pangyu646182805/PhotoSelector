@@ -64,9 +64,7 @@ public class PhotoSelectorActivity extends AppCompatActivity implements MediaLoa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_selector);
         StatusBarUtils.immersiveStatusBar(this);
-        if (mOptions.supportDarkStatusBar) {
-            StatusBarUtils.setStatusBarDarkMode(this);
-        }
+
         initView(savedInstanceState);
         initListener();
 
@@ -163,10 +161,16 @@ public class PhotoSelectorActivity extends AppCompatActivity implements MediaLoa
                         newState == SlidingUpPanelLayout.PanelState.EXPANDED) {
                     // 显示AppBar
                     showAppBarLayout();
+                    if (mOptions.supportDarkStatusBar) {
+                        StatusBarUtils.setStatusBarDarkMode(PhotoSelectorActivity.this, true);
+                    }
                 } else if (previousState == SlidingUpPanelLayout.PanelState.EXPANDED &&
                         newState == SlidingUpPanelLayout.PanelState.DRAGGING) {
                     // 隐藏AppBar
                     hideAppBarLayout();
+                    if (mOptions.supportDarkStatusBar) {
+                        StatusBarUtils.setStatusBarDarkMode(PhotoSelectorActivity.this, false);
+                    }
                 }
             }
         });

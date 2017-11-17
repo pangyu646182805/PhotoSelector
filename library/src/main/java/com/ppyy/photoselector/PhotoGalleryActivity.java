@@ -50,7 +50,7 @@ public class PhotoGalleryActivity extends AppCompatActivity
         setContentView(R.layout.activity_photo_gallery);
         StatusBarUtils.immersiveStatusBar(this);
         if (mOptions.supportDarkStatusBar) {
-            StatusBarUtils.setStatusBarDarkMode(this);
+            StatusBarUtils.setStatusBarDarkMode(this, true);
         }
         mVpPreview = findViewById(R.id.vp_preview);
         mAppBarLayout = findViewById(R.id.app_bar);
