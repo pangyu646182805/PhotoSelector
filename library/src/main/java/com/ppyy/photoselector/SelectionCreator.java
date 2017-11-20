@@ -6,7 +6,10 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.StyleRes;
 import android.support.v4.app.Fragment;
 
+import com.ppyy.photoselector.bean.FileBean;
 import com.ppyy.photoselector.interfaces.ViewHolderCreator;
+
+import java.util.ArrayList;
 
 /**
  * Created by NeuroAndroid on 2017/11/1.
@@ -106,6 +109,18 @@ public final class SelectionCreator {
             throw new IllegalArgumentException("viewHolderCreator must not be null");
         }
         mOptions.viewHolderCreator = viewHolderCreator;
+        return this;
+    }
+
+    /**
+     * 将已经选择的items传进去，默认会勾选这些items
+     *
+     * @param selectedItems 之前选择的项目
+     */
+    public SelectionCreator selectedItems(ArrayList<FileBean> selectedItems) {
+        if (selectedItems != null && !selectedItems.isEmpty()) {
+            mOptions.selectedItems = selectedItems;
+        }
         return this;
     }
 

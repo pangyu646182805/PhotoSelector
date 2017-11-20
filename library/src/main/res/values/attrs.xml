@@ -27,4 +27,6 @@
     <attr name="listPopupWindow.count.color" format="reference|color"/>
     <attr name="page.bg" format="reference|color"/>
     <attr name="item.placeholder.bg" format="reference|color"/>
+    <attr name="selected.checkBox.colorFilter" format="reference|color"/>
+    <attr name="unselected.checkBox.colorFilter" format="reference|color"/>
 </resources>

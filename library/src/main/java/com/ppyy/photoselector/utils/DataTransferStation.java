@@ -44,6 +44,15 @@ public class DataTransferStation {
         this.selectedItems.add(item);
     }
 
+    public void putSelectedItems(ArrayList<FileBean> items) {
+        if (items != null && !items.isEmpty()) {
+            if (this.selectedItems == null) {
+                this.selectedItems = new ArrayList<>();
+            }
+            this.selectedItems.addAll(items);
+        }
+    }
+
     public void removeFromSelectedItems(FileBean item) {
         if (this.selectedItems != null) {
             this.selectedItems.remove(item);

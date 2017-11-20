@@ -23,6 +23,8 @@
         <item name="listPopupWindow.count.color">@color/popup_count_color_light</item>
         <item name="page.bg">@color/page_bg_light</item>
         <item name="item.placeholder.bg">@android:color/white</item>
+        <item name="selected.checkBox.colorFilter">@color/check_box_selected_color</item>
+        <item name="unselected.checkBox.colorFilter">@color/check_box_unselected_color</item>
     </style>
 
     <!-- 夜间模式 -->

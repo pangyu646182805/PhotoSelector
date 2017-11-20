@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private int mChooseMode = MimeType.ALL;
     private int mThemeId = R.style.PhotoSelectorTheme;
+    private ArrayList<FileBean> mSelectedItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,6 +158,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .showHeaderItem(mCbShowHeaderItem.isChecked())
                 .setCanceledOnTouchOutside(mCbCanceledOnTouchOutside.isChecked())
                 .customViewHolder(new SketchViewHolderCreator())
+                .selectedItems(mSelectedItems)
                 .forResult(REQUEST_CODE_CHOOSE);
     }
 
@@ -222,8 +224,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (resultCode != RESULT_OK)
             return;
         if (requestCode == REQUEST_CODE_CHOOSE) {
-            ArrayList<FileBean> selectedItems = data.getParcelableArrayListExtra(PhotoSelectorConfig.EXTRA_RESULT_SELECTED_ITEMS);
-            for (FileBean item : selectedItems) {
+            mSelectedItems = data.getParcelableArrayListExtra(PhotoSelectorConfig.EXTRA_RESULT_SELECTED_ITEMS);
+            for (FileBean item : mSelectedItems) {
                 LogUtils.e("selected item path : " + item.getPath());
             }
         }

@@ -253,12 +253,14 @@ public class PhotoSelectorActivity extends AppCompatActivity implements MediaLoa
                     // 发送出去
                     onResult(selectedItems);
                 } else {
-                    mMediaAdapter.notifyDataSetChanged();
-                    if (mSlidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED) {
-                        mSlidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+                    if (!mDataTransferStation.getSelectedItems().isEmpty()) {
+                        if (mSlidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED) {
+                            mSlidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+                        }
                     }
-                    invalidateOptionsMenu();
                     mSlidingUpPanelLayout.setTouchEnabled(mDataTransferStation.getSelectedItems().isEmpty());
+                    mMediaAdapter.notifyDataSetChanged();
+                    invalidateOptionsMenu();
                 }
             }
         }
@@ -290,8 +292,10 @@ public class PhotoSelectorActivity extends AppCompatActivity implements MediaLoa
     public void onLoadFinished(ArrayList<FileBean> mediaList, ArrayList<FolderBean> folderList) {
         // 将数据存入临时的数据存储点
         mDataTransferStation.putItems(mediaList);
+        mDataTransferStation.putSelectedItems(mOptions.selectedItems);
         mMediaAdapter.setMediaList(mediaList);
         mFolderSpinner.swapFolderList(folderList);
+        invalidateOptionsMenu();
     }
 
     @Override

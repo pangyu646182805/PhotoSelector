@@ -1,6 +1,9 @@
 package com.ppyy.photoselector;
 
 import android.content.Intent;
+import android.content.res.TypedArray;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -74,10 +77,10 @@ public class PhotoGalleryActivity extends AppCompatActivity
             int position = extras.getInt("position");
 
             if (position == -1) {
-                mImages = mDataTransferStation.getSelectedItems();
+                mImages = new ArrayList<>(mDataTransferStation.getSelectedItems());
                 position = 0;
             } else {
-                mImages = mDataTransferStation.getItems();
+                mImages = new ArrayList<>(mDataTransferStation.getItems());
             }
 
             PreviewPagerAdapter previewPagerAdapter = new PreviewPagerAdapter(getSupportFragmentManager(), mImages);
@@ -107,6 +110,16 @@ public class PhotoGalleryActivity extends AppCompatActivity
 
         checkBoxItem.setIcon(mCurrentImage.isSelected() ?
                 R.drawable.ic_check : R.drawable.ic_uncheck);
+        Drawable checkBoxIcon = checkBoxItem.getIcon();
+        if (checkBoxIcon != null) {
+            TypedArray ta = getTheme().obtainStyledAttributes(
+                    new int[]{R.attr.selected_checkBox_colorFilter, R.attr.unselected_checkBox_colorFilter});
+            int selectedColor = ta.getColor(0, 0);
+            int unselectedColor = ta.getColor(1, 0);
+            ta.recycle();
+            checkBoxIcon.setColorFilter(mCurrentImage.isSelected() ?
+                    selectedColor : unselectedColor, PorterDuff.Mode.SRC_IN);
+        }
 
         int selectedSize = mDataTransferStation.getSelectedItems().size();
         if (selectedSize == 0) {
@@ -178,6 +191,7 @@ public class PhotoGalleryActivity extends AppCompatActivity
 
     @Override
     public void onPageSelected(int position) {
+        System.out.println("adapter count : " + mImages.size());
         mCurrentPosition = position;
         mCurrentImage = mImages.get(position);
         setToolbarTitle((position + 1) + "/" + mImages.size());

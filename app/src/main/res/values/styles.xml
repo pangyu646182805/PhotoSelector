@@ -28,5 +28,6 @@
         <item name="colorPrimaryDark">#f8f8f8</item>
         <item name="toolbar">@style/ToolBar.Light</item>
         <item name="listPopupWindow.element.color">@android:color/black</item>
+        <item name="unselected.checkBox.colorFilter">#333333</item>
     </style>
 </resources>

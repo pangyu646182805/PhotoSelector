@@ -2,6 +2,7 @@ package com.ppyy.photoselector.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatImageView;
@@ -31,6 +32,8 @@ import java.util.HashSet;
 public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_MEDIA_HEADER = 0;
     private static final int VIEW_TYPE_MEDIA_CONTENT = 1;
+    private final int mSelectedColor;
+    private final int mUnselectedColor;
 
     private int mMaxSelectable;
 
@@ -67,6 +70,12 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         mImageResize = mContext.getResources().getDisplayMetrics().widthPixels / mOptions.gridSize;
         if (mOptions.showHeaderItem) mPrePos = 1;
+
+        TypedArray ta = mContext.getTheme().obtainStyledAttributes(
+                new int[]{R.attr.selected_checkBox_colorFilter, R.attr.unselected_checkBox_colorFilter});
+        mSelectedColor = ta.getColor(0, 0);
+        mUnselectedColor = ta.getColor(1, 0);
+        ta.recycle();
     }
 
     /**
@@ -166,6 +175,7 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                         .commit();*/
                 mediaContentViewHolder.ivCheck.setImageResource(
                         fileBean.isSelected() ? R.drawable.ic_check : R.drawable.ic_uncheck);
+                mediaContentViewHolder.ivCheck.setColorFilter(fileBean.isSelected() ? mSelectedColor : mUnselectedColor);
                 mediaContentViewHolder.image.setColorFilter(fileBean.isSelected() ?
                         ContextCompat.getColor(mContext, R.color.image_overlay_true) :
                         ContextCompat.getColor(mContext, R.color.image_overlay_false), PorterDuff.Mode.SRC_ATOP);

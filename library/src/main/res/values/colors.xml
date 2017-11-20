@@ -19,4 +19,7 @@
 
     <color name="page_bg_dark">#3c3f41</color>
     <color name="page_bg_light">#ffffff</color>
+
+    <color name="check_box_selected_color">#31c754</color>
+    <color name="check_box_unselected_color">#fdfdfe</color>
 </resources>

@@ -65,7 +65,17 @@ public class MediaLoader implements LoaderManager.LoaderCallbacks<ArrayList<File
         long start = System.currentTimeMillis();
         ArrayList<FileBean> fileList;
         Map<String, ArrayList<FileBean>> map = new TreeMap<>();
+
+        ArrayList<FileBean> selectedItems = SelectionOptions.getOptions().selectedItems;
         for (FileBean fileBean : mediaList) {
+            if (selectedItems != null && !selectedItems.isEmpty()) {
+                for (FileBean selectedItem : selectedItems) {
+                    if (selectedItem.equals(fileBean)) {
+                        fileBean.setSelected(true);
+                        break;
+                    }
+                }
+            }
             String folderName = new File(fileBean.getPath()).getParentFile().getName();
             if (!map.containsKey(folderName)) {
                 fileList = new ArrayList<>();

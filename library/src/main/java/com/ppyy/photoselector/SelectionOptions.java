@@ -3,7 +3,10 @@ package com.ppyy.photoselector;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.StyleRes;
 
+import com.ppyy.photoselector.bean.FileBean;
 import com.ppyy.photoselector.interfaces.ViewHolderCreator;
+
+import java.util.ArrayList;
 
 /**
  * Created by NeuroAndroid on 2017/11/1.
@@ -23,6 +26,7 @@ public class SelectionOptions {
     public int gifFlagResId = R.drawable.ic_gif_flag;  // gif标志resId
     public boolean showHeaderItem = true;  // 是否展示PhotoSelector第一项(即拍照item)
     public boolean canceledOnTouchOutside = true;  // 是否点击空白区域取消PhotoSelector
+    public ArrayList<FileBean> selectedItems;
 
     public ViewHolderCreator viewHolderCreator;
 
