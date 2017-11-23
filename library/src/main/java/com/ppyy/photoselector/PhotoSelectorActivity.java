@@ -24,6 +24,10 @@ import com.ppyy.photoselector.adapter.FolderAdapter;
 import com.ppyy.photoselector.adapter.MediaAdapter;
 import com.ppyy.photoselector.bean.FileBean;
 import com.ppyy.photoselector.bean.FolderBean;
+import com.ppyy.photoselector.compress.CompressConfig;
+import com.ppyy.photoselector.compress.CompressImageOptions;
+import com.ppyy.photoselector.compress.CompressInterface;
+import com.ppyy.photoselector.compress.LuBanOptions;
 import com.ppyy.photoselector.conf.PhotoSelectorConfig;
 import com.ppyy.photoselector.loader.MediaLoader;
 import com.ppyy.photoselector.utils.DataTransferStation;
@@ -251,7 +255,7 @@ public class PhotoSelectorActivity extends AppCompatActivity implements MediaLoa
                 ArrayList<FileBean> selectedItems = mDataTransferStation.getSelectedItems();
                 if (data.getBooleanExtra(PhotoSelectorConfig.EXTRA_RESULT_APPLY, false)) {
                     // 发送出去
-                    onResult(selectedItems);
+                    handleResult(selectedItems);
                 } else {
                     if (!mDataTransferStation.getSelectedItems().isEmpty()) {
                         if (mSlidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED) {
@@ -264,6 +268,49 @@ public class PhotoSelectorActivity extends AppCompatActivity implements MediaLoa
                 }
             }
         }
+    }
+
+    private void handleResult(ArrayList<FileBean> selectedItems) {
+        if (mOptions.isCompress) {
+            compressImage(selectedItems);
+        } else {
+            onResult(selectedItems);
+        }
+    }
+
+    private void compressImage(final ArrayList<FileBean> selectedItems) {
+        CompressConfig compressConfig = CompressConfig.ofDefaultConfig();
+        switch (mOptions.compressMode) {
+            case PhotoSelectorConfig.SYSTEM_COMPRESS_MODE:
+                // 系统自带压缩
+                compressConfig.enablePixelCompress(true);
+                compressConfig.enableQualityCompress(true);
+                compressConfig.setMaxSize(mOptions.compressMaxSize);
+                break;
+            case PhotoSelectorConfig.LU_BAN_COMPRESS_MODE:
+                // LuBan压缩
+                LuBanOptions option = new LuBanOptions.Builder()
+                        .setMaxHeight(mOptions.compressHeight)
+                        .setMaxWidth(mOptions.compressWidth)
+                        .setMaxSize(mOptions.compressMaxSize)
+                        .setGrade(mOptions.compressGrade)
+                        .create();
+                compressConfig = CompressConfig.ofLuban(option);
+                break;
+        }
+
+        CompressImageOptions.compress(this, compressConfig, selectedItems,
+                new CompressInterface.CompressListener() {
+                    @Override
+                    public void onCompressSuccess(ArrayList<FileBean> selectedItems) {
+                        onResult(selectedItems);
+                    }
+
+                    @Override
+                    public void onCompressError(ArrayList<FileBean> selectedItems, String msg) {
+                        onResult(selectedItems);
+                    }
+                }).compress();
     }
 
     private void onResult(ArrayList<FileBean> selectedItems) {
@@ -334,7 +381,7 @@ public class PhotoSelectorActivity extends AppCompatActivity implements MediaLoa
         } else if (itemId == R.id.action_preview) {
             preview(-1);
         } else if (itemId == R.id.action_done) {
-            onResult(mDataTransferStation.getSelectedItems());
+            handleResult(mDataTransferStation.getSelectedItems());
         }
         return super.onOptionsItemSelected(item);
     }

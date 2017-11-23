@@ -124,6 +124,46 @@ public final class SelectionCreator {
         return this;
     }
 
+    /**
+     * 是否压缩图像
+     */
+    public SelectionCreator compress(boolean isCompress) {
+        mOptions.isCompress = isCompress;
+        return this;
+    }
+
+    /**
+     * 压缩模式
+     * PhotoSelectorConfig.SYSTEM_COMPRESS_MODE 系统自带
+     * PhotoSelectorConfig.LU_BAN_COMPRESS_MODE LuBan压缩
+     */
+    public SelectionCreator compressMode(int compressMode) {
+        mOptions.compressMode = compressMode;
+        return this;
+    }
+
+    /**
+     * LuBan压缩档次
+     */
+    public SelectionCreator compressGrade(int compressGrade) {
+        mOptions.compressGrade = compressGrade;
+        return this;
+    }
+
+    /**
+     * 压缩最大大小 单位kb
+     */
+    public SelectionCreator compressMaxSize(int kb) {
+        mOptions.compressMaxSize = kb * 1024;
+        return this;
+    }
+
+    public SelectionCreator compressWidthAndHeight(int width, int height) {
+        mOptions.compressWidth = width;
+        mOptions.compressHeight = height;
+        return this;
+    }
+
     public void forResult(int requestCode) {
         Activity activity = mMediaSelector.getActivity();
         if (activity == null) {

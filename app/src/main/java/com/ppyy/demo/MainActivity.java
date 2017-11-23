@@ -3,10 +3,13 @@ package com.ppyy.demo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
+import android.text.format.Formatter;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -17,6 +20,7 @@ import com.ppyy.photoselector.bean.FileBean;
 import com.ppyy.photoselector.conf.PhotoSelectorConfig;
 import com.ppyy.photoselector.utils.LogUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -83,9 +87,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @BindView(R.id.cb_canceled_touch_outside)
     CheckBox mCbCanceledOnTouchOutside;
 
+    @BindView(R.id.cb_compress)
+    CheckBox mCbCompress;
+    @BindView(R.id.rg_compress)
+    RadioGroup mRgCompress;
+    @BindView(R.id.rb_compress_system)
+    RadioButton mRbCompressSystem;
+    @BindView(R.id.rb_compress_lu_ban)
+    RadioButton mRbCompressLuBan;
+
     private int mChooseMode = MimeType.ALL;
     private int mThemeId = R.style.PhotoSelectorTheme;
     private ArrayList<FileBean> mSelectedItems;
+
+    private int mCompressMode = PhotoSelectorConfig.SYSTEM_COMPRESS_MODE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,9 +114,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mBtnSpanCountCut.setOnClickListener(this);
         mRgGroup.setOnCheckedChangeListener(this);
         mRgTheme.setOnCheckedChangeListener(this);
+        mRgCompress.setOnCheckedChangeListener(this);
 
         mCbSingleMode.setOnCheckedChangeListener(this);
         mCbShowGif.setOnCheckedChangeListener(this);
+        mCbCompress.setOnCheckedChangeListener(this);
     }
 
     @Override
@@ -159,6 +176,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .setCanceledOnTouchOutside(mCbCanceledOnTouchOutside.isChecked())
                 .customViewHolder(new SketchViewHolderCreator())
                 .selectedItems(mSelectedItems)
+                .compress(mCbCompress.isChecked())
+                .compressMode(mCompressMode)
                 .forResult(REQUEST_CODE_CHOOSE);
     }
 
@@ -201,6 +220,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mThemeId = R.style.PhotoSelectorTheme_Night;
                 mCbSupportDarkStatusBar.setChecked(false);
                 break;
+            case R.id.rb_compress_system:
+                mCompressMode = PhotoSelectorConfig.SYSTEM_COMPRESS_MODE;
+                break;
+            case R.id.rb_compress_lu_ban:
+                mCompressMode = PhotoSelectorConfig.LU_BAN_COMPRESS_MODE;
+                break;
         }
     }
 
@@ -215,6 +240,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mBtnMaxSelectableAdd.setEnabled(!isChecked);
                 mTvMaxSelectable.setText(isChecked ? "1" : mTvMaxSelectable.getText());
                 break;
+            case R.id.cb_compress:
+                mRgCompress.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+                break;
         }
     }
 
@@ -227,6 +255,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mSelectedItems = data.getParcelableArrayListExtra(PhotoSelectorConfig.EXTRA_RESULT_SELECTED_ITEMS);
             for (FileBean item : mSelectedItems) {
                 LogUtils.e("selected item path : " + item.getPath());
+                String compressPath = item.getCompressPath();
+                if (!TextUtils.isEmpty(compressPath)) {
+                    LogUtils.e("压缩之前的大小 : " + Formatter.formatFileSize(this, new File(item.getPath()).length()));
+                    LogUtils.e("selected item compress path : " + compressPath);
+                    LogUtils.e("压缩之后的大小 : " + Formatter.formatFileSize(this, new File(compressPath).length()));
+                }
             }
         }
     }

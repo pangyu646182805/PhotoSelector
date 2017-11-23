@@ -26,6 +26,11 @@ public class FileBean implements Parcelable {
     private int width;  // 尺寸信息
     private int height;  // 尺寸信息
 
+    private boolean isCrop;  // 是否裁剪过
+    private String cropPath;  // 裁剪过后图像保存的path
+    private String compressPath;  // 压缩过后图像保存的path
+    private boolean isCompressed;  // 图像是否成功压缩
+
     public int getDuration() {
         return duration;
     }
@@ -138,6 +143,38 @@ public class FileBean implements Parcelable {
         this.height = height;
     }
 
+    public boolean isCrop() {
+        return isCrop;
+    }
+
+    public void setCrop(boolean crop) {
+        isCrop = crop;
+    }
+
+    public String getCropPath() {
+        return cropPath;
+    }
+
+    public void setCropPath(String cropPath) {
+        this.cropPath = cropPath;
+    }
+
+    public String getCompressPath() {
+        return compressPath;
+    }
+
+    public void setCompressPath(String compressPath) {
+        this.compressPath = compressPath;
+    }
+
+    public boolean isCompressed() {
+        return isCompressed;
+    }
+
+    public void setCompressed(boolean compressed) {
+        isCompressed = compressed;
+    }
+
     /*@Override
     public String toString() {
         return "id --> " + id + "\n" +
@@ -185,6 +222,10 @@ public class FileBean implements Parcelable {
         dest.writeValue(this.dateTaken);
         dest.writeInt(this.width);
         dest.writeInt(this.height);
+        dest.writeByte(this.isCrop ? (byte) 1 : (byte) 0);
+        dest.writeString(this.cropPath);
+        dest.writeString(this.compressPath);
+        dest.writeByte(this.isCompressed ? (byte) 1 : (byte) 0);
     }
 
     public FileBean() {
@@ -205,6 +246,10 @@ public class FileBean implements Parcelable {
         this.dateTaken = (Long) in.readValue(Long.class.getClassLoader());
         this.width = in.readInt();
         this.height = in.readInt();
+        this.isCrop = in.readByte() != 0;
+        this.cropPath = in.readString();
+        this.compressPath = in.readString();
+        this.isCompressed = in.readByte() != 0;
     }
 
     public static final Creator<FileBean> CREATOR = new Creator<FileBean>() {

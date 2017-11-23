@@ -4,6 +4,8 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.StyleRes;
 
 import com.ppyy.photoselector.bean.FileBean;
+import com.ppyy.photoselector.compress.LuBan;
+import com.ppyy.photoselector.conf.PhotoSelectorConfig;
 import com.ppyy.photoselector.interfaces.ViewHolderCreator;
 
 import java.util.ArrayList;
@@ -27,6 +29,12 @@ public class SelectionOptions {
     public boolean showHeaderItem = true;  // 是否展示PhotoSelector第一项(即拍照item)
     public boolean canceledOnTouchOutside = true;  // 是否点击空白区域取消PhotoSelector
     public ArrayList<FileBean> selectedItems;
+    public boolean isCompress;  // 是否压缩图片
+    public int compressMode = PhotoSelectorConfig.SYSTEM_COMPRESS_MODE;  // 压缩模式
+    public int compressMaxSize = PhotoSelectorConfig.MAX_COMPRESS_SIZE;  // 单位kb
+    public int compressGrade = LuBan.CUSTOM_GEAR;
+    public int compressHeight;
+    public int compressWidth;
 
     public ViewHolderCreator viewHolderCreator;
 
@@ -53,6 +61,13 @@ public class SelectionOptions {
         gifFlagResId = R.drawable.ic_gif_flag;
         showHeaderItem = true;
         canceledOnTouchOutside = true;
+        if (selectedItems != null) selectedItems.clear();
+        isCompress = false;
+        compressMode = PhotoSelectorConfig.SYSTEM_COMPRESS_MODE;
+        compressMaxSize = PhotoSelectorConfig.MAX_COMPRESS_SIZE;
+        compressGrade = LuBan.CUSTOM_GEAR;
+        compressHeight = 0;
+        compressWidth = 0;
     }
 
     private static class SelectionOptionsHolder {

@@ -194,5 +194,34 @@
             android:layout_height="wrap_content"
             android:checked="true"
             android:text="是否点击空白区域取消PhotoSelector"/>
+
+        <CheckBox
+            android:id="@+id/cb_compress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="是否压缩图片"/>
+
+        <RadioGroup
+            android:id="@+id/rg_compress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <RadioButton
+                android:id="@+id/rb_compress_system"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="系统自带"/>
+
+            <RadioButton
+                android:id="@+id/rb_compress_lu_ban"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:text="LuBan压缩"/>
+        </RadioGroup>
     </LinearLayout>
 </ScrollView>
