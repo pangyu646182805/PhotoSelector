@@ -3,7 +3,6 @@ package com.ppyy.photoselector.interfaces;
 import android.view.ViewStub;
 import android.widget.ImageView;
 
-import com.ppyy.photoselector.adapter.MediaAdapter;
 import com.ppyy.photoselector.bean.FileBean;
 
 /**
@@ -11,7 +10,11 @@ import com.ppyy.photoselector.bean.FileBean;
  */
 
 public interface ViewHolderCreator {
+    // 加载MediaAdapter中item中的ViewStub
     ImageView inflateViewStub(ViewStub viewStub);
 
-    void onBindViewHolder(MediaAdapter.MediaContentViewHolder viewHolder, FileBean item);
+    // 加载PhotoGalleryFragment中的ViewStub
+    ImageView inflateGalleryViewStub(ViewStub viewStub);
+
+    void onBindViewHolder(ImageView imageView, FileBean item);
 }

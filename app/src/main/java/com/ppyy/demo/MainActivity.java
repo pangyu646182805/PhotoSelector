@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private int mChooseMode = MimeType.ALL;
     private int mThemeId = R.style.PhotoSelectorTheme;
-    private ArrayList<FileBean> mSelectedItems;
+    private ArrayList<FileBean> mSelectedItems = new ArrayList<>();
 
     private int mCompressMode = PhotoSelectorConfig.SYSTEM_COMPRESS_MODE;
 
@@ -163,6 +163,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @OnClick(R.id.btn_start)
     public void start() {
         // startActivity(new Intent(this, PhotoSelectorActivity.class));
+        if (mSelectedItems != null)
+            LogUtils.e("mSelectedItems size : " + mSelectedItems.size());
         MediaSelector.from(this)
                 .choose(mChooseMode)
                 .themeId(mThemeId)
@@ -252,7 +254,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (resultCode != RESULT_OK)
             return;
         if (requestCode == REQUEST_CODE_CHOOSE) {
-            mSelectedItems = data.getParcelableArrayListExtra(PhotoSelectorConfig.EXTRA_RESULT_SELECTED_ITEMS);
+            mSelectedItems.clear();
+            mSelectedItems.addAll(data.getParcelableArrayListExtra(PhotoSelectorConfig.EXTRA_RESULT_SELECTED_ITEMS));
             for (FileBean item : mSelectedItems) {
                 LogUtils.e("selected item path : " + item.getPath());
                 String compressPath = item.getCompressPath();

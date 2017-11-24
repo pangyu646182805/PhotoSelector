@@ -119,7 +119,7 @@ public final class SelectionCreator {
      */
     public SelectionCreator selectedItems(ArrayList<FileBean> selectedItems) {
         if (selectedItems != null && !selectedItems.isEmpty()) {
-            mOptions.selectedItems = selectedItems;
+            mOptions.selectedItems = new ArrayList<>(selectedItems);
         }
         return this;
     }

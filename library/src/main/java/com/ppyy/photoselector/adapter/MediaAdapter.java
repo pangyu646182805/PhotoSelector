@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatImageView;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -160,6 +161,19 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (getItemViewType(position) == VIEW_TYPE_MEDIA_HEADER) {
             MediaHeaderViewHolder mediaHeaderViewHolder = (MediaHeaderViewHolder) holder;
+            if (mOptions.mimeType == MimeType.AUDIO) {
+                mediaHeaderViewHolder.ivHeader.setImageResource(R.drawable.ic_recording);
+                mediaHeaderViewHolder.tvTitle.setText(R.string.take_recording);
+            } else {
+                mediaHeaderViewHolder.ivHeader.setImageResource(R.drawable.ic_photo_camera);
+                if (mOptions.mimeType == MimeType.ALL) {
+                    mediaHeaderViewHolder.tvTitle.setText(R.string.shoot_photo);
+                } else if (mOptions.mimeType == MimeType.PHOTO) {
+                    mediaHeaderViewHolder.tvTitle.setText(R.string.take_photo);
+                } else {
+                    mediaHeaderViewHolder.tvTitle.setText(R.string.take_camera);
+                }
+            }
         } else {
             MediaContentViewHolder mediaContentViewHolder = (MediaContentViewHolder) holder;
             FileBean fileBean = getItem(position);
@@ -197,7 +211,7 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                         mediaContentViewHolder.ivType.setImageResource(R.drawable.ic_audio);
                     }
                 }
-                mOptions.viewHolderCreator.onBindViewHolder(mediaContentViewHolder, fileBean);
+                mOptions.viewHolderCreator.onBindViewHolder(mediaContentViewHolder.image, fileBean);
             }
         }
     }
@@ -275,10 +289,12 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public class MediaHeaderViewHolder extends RecyclerView.ViewHolder {
         private AppCompatImageView ivHeader;
-        private TextView tvTitle;
+        private AppCompatTextView tvTitle;
 
         MediaHeaderViewHolder(View itemView) {
             super(itemView);
+            ivHeader = itemView.findViewById(R.id.iv_header);
+            tvTitle = itemView.findViewById(R.id.tv_title);
         }
     }
 

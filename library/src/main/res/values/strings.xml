@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">library</string>
+    <string name="shoot_photo">拍摄</string>
+    <string name="take_photo">拍照</string>
+    <string name="take_camera">摄像</string>
+    <string name="take_recording">录音</string>
 </resources>

@@ -61,7 +61,10 @@ public class SelectionOptions {
         gifFlagResId = R.drawable.ic_gif_flag;
         showHeaderItem = true;
         canceledOnTouchOutside = true;
-        if (selectedItems != null) selectedItems.clear();
+        if (selectedItems != null) {
+            selectedItems.clear();
+            selectedItems = null;
+        }
         isCompress = false;
         compressMode = PhotoSelectorConfig.SYSTEM_COMPRESS_MODE;
         compressMaxSize = PhotoSelectorConfig.MAX_COMPRESS_SIZE;

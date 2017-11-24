@@ -223,19 +223,23 @@ public class PhotoSelectorActivity extends AppCompatActivity implements MediaLoa
     }
 
     private void showAppBarLayout() {
-        ViewCompat.animate(mAppBarLayout)
-                .translationY(0)
-                .setDuration(200)
-                .setInterpolator(new DecelerateInterpolator())
-                .start();
+        if (mAppBarLayout.getTranslationY() < 0) {
+            ViewCompat.animate(mAppBarLayout)
+                    .translationY(0)
+                    .setDuration(200)
+                    .setInterpolator(new DecelerateInterpolator())
+                    .start();
+        }
     }
 
     private void hideAppBarLayout() {
-        ViewCompat.animate(mAppBarLayout)
-                .translationY(-mAppBarLayout.getHeight())
-                .setDuration(200)
-                .setInterpolator(new AccelerateDecelerateInterpolator())
-                .start();
+        if (mAppBarLayout.getTranslationY() >= 0) {
+            ViewCompat.animate(mAppBarLayout)
+                    .translationY(-mAppBarLayout.getHeight())
+                    .setDuration(200)
+                    .setInterpolator(new AccelerateDecelerateInterpolator())
+                    .start();
+        }
     }
 
     @Override
@@ -316,7 +320,11 @@ public class PhotoSelectorActivity extends AppCompatActivity implements MediaLoa
     private void onResult(ArrayList<FileBean> selectedItems) {
         Intent result = new Intent();
         result.putParcelableArrayListExtra(PhotoSelectorConfig.EXTRA_RESULT_SELECTED_ITEMS, selectedItems);
-        setResult(RESULT_OK, result);
+        if (selectedItems == null || selectedItems.isEmpty()) {
+            setResult(RESULT_CANCELED, null);
+        } else {
+            setResult(RESULT_OK, result);
+        }
         onBackPressed();
     }
 
@@ -339,7 +347,15 @@ public class PhotoSelectorActivity extends AppCompatActivity implements MediaLoa
     public void onLoadFinished(ArrayList<FileBean> mediaList, ArrayList<FolderBean> folderList) {
         // 将数据存入临时的数据存储点
         mDataTransferStation.putItems(mediaList);
-        mDataTransferStation.putSelectedItems(mOptions.selectedItems);
+        ArrayList<FileBean> selectedItems = mOptions.selectedItems;
+        mDataTransferStation.putSelectedItems(selectedItems);
+
+        if (selectedItems != null && !selectedItems.isEmpty()) {
+            showAppBarLayout();
+            mSlidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+            mSlidingUpPanelLayout.setTouchEnabled(false);
+        }
+
         mMediaAdapter.setMediaList(mediaList);
         mFolderSpinner.swapFolderList(folderList);
         invalidateOptionsMenu();

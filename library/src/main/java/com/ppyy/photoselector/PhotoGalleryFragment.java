@@ -9,10 +9,12 @@ import android.support.v7.widget.AppCompatImageView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.ImageView;
 
 import com.ppyy.photoselector.bean.FileBean;
 import com.ppyy.photoselector.interfaces.DisplayCallBack;
+import com.ppyy.photoselector.utils.LogUtils;
 import com.ppyy.photoselector.utils.VideoThumbnailUriModel;
 
 import me.xiaopan.sketch.Sketch;
@@ -29,6 +31,7 @@ import me.xiaopan.sketch.viewfun.zoom.ImageZoomer;
 
 public class PhotoGalleryFragment extends Fragment {
     private SketchImageView mIvImg;
+    private ViewStub mStub;
     private AppCompatImageView mIvPLay;
 
     private DisplayCallBack mDisplayCallBack;
@@ -64,6 +67,8 @@ public class PhotoGalleryFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         FileBean item = getArguments().getParcelable("item");
         if (item == null) return;
+        // mIvImg = SelectionOptions.getOptions().viewHolderCreator.inflateGalleryViewStub(mStub);
+
         mIvImg = view.findViewById(R.id.iv_img);
         mIvPLay = view.findViewById(R.id.iv_play);
         mIvImg.setScaleType(ImageView.ScaleType.FIT_CENTER);
@@ -73,7 +78,7 @@ public class PhotoGalleryFragment extends Fragment {
 
             mIvImg.setZoomEnabled(true);
             mIvImg.getHugeImageViewer().setPause(!isVisibleToUser());
-            if ("image/gif".equals(item.getMimeType())) {
+            if ("image/gif".equals(item.getMimeType()) || item.getPath().endsWith("gif")) {
                 Sketch.with(getContext())
                         .display(item.getPath(), mIvImg)
                         .decodeGifImage().commit();
@@ -144,6 +149,7 @@ public class PhotoGalleryFragment extends Fragment {
     }
 
     private void onUserVisibleChanged(boolean isVisibleToUser) {
+        LogUtils.e("isVisibleToUser : " + isVisibleToUser);
         if (mIvImg != null) {
             HugeImageViewer hugeImageViewer = mIvImg.getHugeImageViewer();
             if (null != hugeImageViewer) {
