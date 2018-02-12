@@ -3,6 +3,9 @@ package com.ppyy.demo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.view.View;
@@ -19,16 +22,23 @@ import com.ppyy.photoselector.SketchViewHolderCreator;
 import com.ppyy.photoselector.bean.FileBean;
 import com.ppyy.photoselector.conf.PhotoSelectorConfig;
 import com.ppyy.photoselector.utils.LogUtils;
+import com.ppyy.photoselector.utils.SizeUtils;
+import com.ppyy.photoselector.utils.SpacesItemDecoration;
 
 import java.io.File;
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, RadioGroup.OnCheckedChangeListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, RadioGroup.OnCheckedChangeListener, GridImgAdapter.OnAddImageListener {
     private static final int REQUEST_CODE_CHOOSE = 11;
+
+    @BindView(R.id.tool_bar)
+    Toolbar mToolbar;
+
+    @BindView(R.id.rv_img)
+    RecyclerView mRvImg;
 
     @BindView(R.id.rg_theme)
     RadioGroup mRgTheme;
@@ -78,6 +88,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @BindView(R.id.cb_single_mode)
     CheckBox mCbSingleMode;
 
+    @BindView(R.id.cb_preview_photo)
+    CheckBox mCbPreviewPhoto;
     @BindView(R.id.cb_show_gif)
     CheckBox mCbShowGif;
     @BindView(R.id.cb_show_gif_flag)
@@ -101,12 +113,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<FileBean> mSelectedItems = new ArrayList<>();
 
     private int mCompressMode = PhotoSelectorConfig.SYSTEM_COMPRESS_MODE;
+    private GridImgAdapter mGridImgAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        setSupportActionBar(mToolbar);
+
+        mRvImg.setLayoutManager(new GridLayoutManager(this, 3));
+        mRvImg.addItemDecoration(new SpacesItemDecoration(SizeUtils.dp2px(this, 3), 3));
+        mGridImgAdapter = new GridImgAdapter(this, null);
+        mRvImg.setAdapter(mGridImgAdapter);
+        mGridImgAdapter.setMaxSelectable(getMaxSelectable());
+
+        mGridImgAdapter.setOnAddImageListener(this);
 
         mBtnMaxSelectableAdd.setOnClickListener(this);
         mBtnMaxSelectableCut.setOnClickListener(this);
@@ -117,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRgCompress.setOnCheckedChangeListener(this);
 
         mCbSingleMode.setOnCheckedChangeListener(this);
+        mCbPreviewPhoto.setOnCheckedChangeListener(this);
         mCbShowGif.setOnCheckedChangeListener(this);
         mCbCompress.setOnCheckedChangeListener(this);
     }
@@ -158,29 +182,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private int getSpanCount() {
         return Integer.parseInt(mTvSpanCount.getText().toString());
-    }
-
-    @OnClick(R.id.btn_start)
-    public void start() {
-        // startActivity(new Intent(this, PhotoSelectorActivity.class));
-        if (mSelectedItems != null)
-            LogUtils.e("mSelectedItems size : " + mSelectedItems.size());
-        MediaSelector.from(this)
-                .choose(mChooseMode)
-                .themeId(mThemeId)
-                .supportDarkStatusBar(mCbSupportDarkStatusBar.isChecked())
-                .maxSelectable(getMaxSelectable())
-                .gridSize(getSpanCount())
-                .showGif(mCbShowGif.isChecked())
-                .showGifFlag(mCbShowGifFlag.isChecked() && mCbShowGifFlag.isEnabled())
-                // .setGifFlagResId(R.drawable.ic_gif_custom)
-                .showHeaderItem(mCbShowHeaderItem.isChecked())
-                .setCanceledOnTouchOutside(mCbCanceledOnTouchOutside.isChecked())
-                .customViewHolder(new SketchViewHolderCreator())
-                .selectedItems(mSelectedItems)
-                .compress(mCbCompress.isChecked())
-                .compressMode(mCompressMode)
-                .forResult(REQUEST_CODE_CHOOSE);
     }
 
     @Override
@@ -265,6 +266,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     LogUtils.e("压缩之后的大小 : " + Formatter.formatFileSize(this, new File(compressPath).length()));
                 }
             }
+            mGridImgAdapter.setDataList(mSelectedItems);
         }
+    }
+
+    @Override
+    public void onAddImage() {
+        if (mSelectedItems != null)
+            LogUtils.e("mSelectedItems size : " + mSelectedItems.size());
+        mGridImgAdapter.setMaxSelectable(getMaxSelectable());
+        MediaSelector.from(this)
+                .choose(mChooseMode)
+                .themeId(mThemeId)
+                .supportDarkStatusBar(mCbSupportDarkStatusBar.isChecked())
+                .maxSelectable(getMaxSelectable())
+                .gridSize(getSpanCount())
+                .previewPhoto(mCbPreviewPhoto.isChecked())
+                .showGif(mCbShowGif.isChecked())
+                .showGifFlag(mCbShowGifFlag.isChecked() && mCbShowGifFlag.isEnabled())
+                // .setGifFlagResId(R.drawable.ic_gif_custom)
+                .showHeaderItem(mCbShowHeaderItem.isChecked())
+                .setCanceledOnTouchOutside(mCbCanceledOnTouchOutside.isChecked())
+                .customViewHolder(new SketchViewHolderCreator())
+                .selectedItems(mSelectedItems)
+                .compress(mCbCompress.isChecked())
+                .compressMode(mCompressMode)
+                .forResult(REQUEST_CODE_CHOOSE);
     }
 }

@@ -37,7 +37,7 @@ public class VideoLoader {
         return songs;
     }
 
-    private static FileBean getVideoFromCursorImpl(Cursor cursor) {
+    public static FileBean getVideoFromCursorImpl(Cursor cursor) {
         FileBean videoBean = new FileBean();
         videoBean.setId(cursor.getInt(cursor.getColumnIndex(BaseColumns._ID)));
         videoBean.setTitle(cursor.getString(cursor.getColumnIndex(MediaStore.Video.VideoColumns.TITLE)));

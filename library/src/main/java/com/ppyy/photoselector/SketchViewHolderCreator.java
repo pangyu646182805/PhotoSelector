@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import com.ppyy.photoselector.bean.FileBean;
 import com.ppyy.photoselector.interfaces.ViewHolderCreator;
 import com.ppyy.photoselector.utils.AudioThumbnailUriModel;
+import com.ppyy.photoselector.utils.LogUtils;
 import com.ppyy.photoselector.utils.VideoThumbnailUriModel;
 
 import me.xiaopan.sketch.Sketch;
@@ -35,21 +36,23 @@ public class SketchViewHolderCreator implements ViewHolderCreator {
     @Override
     public void onBindViewHolder(ImageView imageView, FileBean item) {
         SketchImageView ivImg = (SketchImageView) imageView;
-        String uri;
+        ivImg.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        String url;
         switch (item.getMediaMimeType()) {
             case MimeType.PHOTO:
             default:
-                uri = item.getPath();
+                url = item.getPath();
                 break;
             case MimeType.VIDEO:
-                uri = VideoThumbnailUriModel.makeUri(item.getPath());
+                url = VideoThumbnailUriModel.makeUri(item.getPath());
                 break;
             case MimeType.AUDIO:
-                uri = AudioThumbnailUriModel.makeUri(item.getPath());
+                url = AudioThumbnailUriModel.makeUri(item.getPath());
                 break;
         }
+        LogUtils.e(ivImg.getLayoutParams().width + " : " + ivImg.getLayoutParams().height);
         Sketch.with(ivImg.getContext())
-                .display(uri, ivImg)
+                .display(url, ivImg)
                 .maxSize(ivImg.getLayoutParams().width, ivImg.getLayoutParams().height)
                 .resize(ivImg.getLayoutParams().width, ivImg.getLayoutParams().height)
                 .cacheProcessedImageInDisk()

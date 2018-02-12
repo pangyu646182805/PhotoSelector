@@ -9,6 +9,7 @@ import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +25,6 @@ import com.ppyy.photoselector.SelectionOptions;
 import com.ppyy.photoselector.bean.FileBean;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 /**
  * Created by NeuroAndroid on 2017/11/1.
@@ -40,19 +40,15 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private RecyclerView mRecyclerView;
 
-    /**
-     * 之前选中的位置
-     */
-    private int mPrePos;
-
     private OnItemSelectedListener mOnItemSelectedListener;
     private OnItemClickListener mOnItemClickListener;
-    private final HashSet<FileBean> mSelectedBeans = new HashSet<>();
 
     private final Context mContext;
     private ArrayList<FileBean> mMediaList = new ArrayList<>();
     private SelectionOptions mOptions;
     private int mImageResize;
+
+    private final SparseBooleanArray mSelectedStates = new SparseBooleanArray();
 
     public void setOnItemSelectedListener(OnItemSelectedListener onItemSelectedListener) {
         mOnItemSelectedListener = onItemSelectedListener;
@@ -70,7 +66,6 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         mMaxSelectable = mOptions.maxSelectable;
 
         mImageResize = mContext.getResources().getDisplayMetrics().widthPixels / mOptions.gridSize;
-        if (mOptions.showHeaderItem) mPrePos = 1;
 
         TypedArray ta = mContext.getTheme().obtainStyledAttributes(
                 new int[]{R.attr.selected_checkBox_colorFilter, R.attr.unselected_checkBox_colorFilter});
@@ -96,8 +91,21 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_MEDIA_HEADER) {
-            return new MediaHeaderViewHolder(
-                    LayoutInflater.from(parent.getContext()).inflate(R.layout.item_media_header, parent, false));
+            final View mediaHeaderView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_media_header, parent, false);
+            final MediaHeaderViewHolder mediaHeaderViewHolder = new MediaHeaderViewHolder(mediaHeaderView);
+            mediaHeaderView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mSelectedStates.size() >= mMaxSelectable) {
+                        Toast.makeText(mContext, "最多可以选择" + mMaxSelectable + "个文件", Toast.LENGTH_SHORT).show();
+                    } else {
+                        if (mOnItemClickListener != null) {
+                            mOnItemClickListener.onItemClick(mediaHeaderViewHolder, mediaHeaderViewHolder.getLayoutPosition(), null);
+                        }
+                    }
+                }
+            });
+            return mediaHeaderViewHolder;
         } else {
             /*return new MediaContentViewHolder(
                     LayoutInflater.from(parent.getContext()).inflate(R.layout.item_media_content, parent, false));*/
@@ -107,8 +115,12 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 @Override
                 public void onClick(View view) {
                     int position = mediaContentViewHolder.getLayoutPosition();
-                    if (mOnItemClickListener != null) {
-                        mOnItemClickListener.onItemClick(mediaContentViewHolder, position, getItem(position));
+                    if (mOptions.previewPhoto) {
+                        if (mOnItemClickListener != null) {
+                            mOnItemClickListener.onItemClick(mediaContentViewHolder, position, getItem(position));
+                        }
+                    } else {
+                        performClick(mediaContentViewHolder, position);
                     }
                 }
             });
@@ -118,43 +130,73 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private void performClick(RecyclerView.ViewHolder viewHolder, int layoutPosition) {
         final FileBean item = getItem(layoutPosition);
-        handleClickEvent(viewHolder, layoutPosition, item);
+        handle(viewHolder, layoutPosition, item);
     }
 
-    private void handleClickEvent(RecyclerView.ViewHolder viewHolder, int position, FileBean item) {
+    private void handle(RecyclerView.ViewHolder viewHolder, int position, FileBean item) {
         if (item == null)
             return;
-        if (mMaxSelectable == 1 && item.isSelected()) {
-            /*if (mOnItemSelectedListener != null) {
-                mOnItemSelectedListener.onItemSelected(viewHolder, position, true, item);
-            }*/
-            return;
+        boolean selected = mSelectedStates.get(position, false);
+        if (mMaxSelectable == 1) {
+            // 单选
+            if (selected) {
+                mSelectedStates.delete(position);
+                item.setSelected(false);
+
+                if (mOnItemSelectedListener != null) {
+                    mOnItemSelectedListener.onItemSelected(viewHolder, position, false, item);
+                }
+            } else {
+                if (mSelectedStates.size() == 1) {
+                    int prePosition = mSelectedStates.keyAt(0);
+                    getItem(prePosition).setSelected(false);
+                    mSelectedStates.delete(prePosition);
+                    notifyItemChanged(prePosition);
+
+                    if (mOnItemSelectedListener != null) {
+                        mOnItemSelectedListener.onItemSelected(viewHolder, prePosition, false, getItem(prePosition));
+                    }
+                }
+
+                mSelectedStates.put(position, true);
+                item.setSelected(true);
+            }
+        } else {
+            // 多选
+            if (mSelectedStates.size() >= mMaxSelectable && !selected) {
+                Toast.makeText(mContext, "最多可以选择" + mMaxSelectable + "个文件", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (selected) {
+                mSelectedStates.delete(position);
+                item.setSelected(false);
+            } else {
+                mSelectedStates.put(position, true);
+                item.setSelected(true);
+            }
         }
-        if (mMaxSelectable > 1 && mSelectedBeans.size() >= mMaxSelectable && !item.isSelected()) {
-            Toast.makeText(mContext, "最多可以选择" + mMaxSelectable + "个文件", Toast.LENGTH_SHORT).show();
-            return;
+        notifyItemChanged(position);
+
+        if (mOnItemSelectedListener != null) {
+            mOnItemSelectedListener.onItemSelected(viewHolder, position, !selected, item);
         }
-        boolean selected = !item.isSelected();
-        item.setSelected(selected);
-        dispatchSelected(viewHolder, position, item, selected);
-        if (mMaxSelectable == 1 && position != mPrePos && item.isSelected()) {
-            mMediaList.get(mPrePos - 1).setSelected(false);
-            dispatchSelected(viewHolder, mPrePos, item, false);
-            notifyItemChanged(mPrePos);
-        }
-        notifyItemRangeChanged(position, 1);
-        mPrePos = position;
     }
 
-    private void dispatchSelected(RecyclerView.ViewHolder viewHolder, int position, FileBean item, boolean isSelected) {
-        if (isSelected) {
-            mSelectedBeans.add(item);
-        } else {
-            mSelectedBeans.remove(item);
+    public void resetSelectedStates(ArrayList<FileBean> selectedItems) {
+        mSelectedStates.clear();
+        if (selectedItems != null && !selectedItems.isEmpty()) {
+            for (FileBean selectedBean : selectedItems) {
+                int selectedPosition = indexOfMediaList(selectedBean);
+                if (selectedPosition != -1) {
+                    FileBean item = getItem(selectedPosition);
+                    if (item != null) {
+                        item.setSelected(true);
+                    }
+                    mSelectedStates.put(selectedPosition, true);
+                }
+            }
         }
-        if (mOnItemSelectedListener != null) {
-            mOnItemSelectedListener.onItemSelected(viewHolder, position, isSelected, item);
-        }
+        notifyDataSetChanged();
     }
 
     @Override
@@ -216,11 +258,21 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    private FileBean getItem(int position) {
+    public FileBean getItem(int position) {
         if (mOptions.showHeaderItem) {
             return mMediaList.get(position - 1);
         } else {
             return mMediaList.get(position);
+        }
+    }
+
+    private int indexOfMediaList(FileBean item) {
+        int index = mMediaList.indexOf(item);
+        if (index == -1) return index;
+        if (mOptions.showHeaderItem) {
+            return index + 1;
+        } else {
+            return index;
         }
     }
 
@@ -287,6 +339,13 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         notifyDataSetChanged();
     }
 
+    public void putFileBean(int index, FileBean fileBean) {
+        if (index >= 0 && fileBean != null) {
+            mMediaList.add(index, fileBean);
+            notifyItemInserted(index);
+        }
+    }
+
     public class MediaHeaderViewHolder extends RecyclerView.ViewHolder {
         private AppCompatImageView ivHeader;
         private AppCompatTextView tvTitle;
@@ -299,7 +358,7 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public class MediaContentViewHolder extends RecyclerView.ViewHolder {
-        public ImageView image;
+        ImageView image;
         AppCompatImageView ivCheck;
         AppCompatImageView ivGifFlag;
         LinearLayout llBottom;
@@ -321,13 +380,15 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             llBottom = itemView.findViewById(R.id.ll_bottom);
             ivType = itemView.findViewById(R.id.iv_type);
             tvDuration = itemView.findViewById(R.id.tv_duration);
-            LinearLayout llCheck = itemView.findViewById(R.id.ll_check);
-            llCheck.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    performClick(MediaContentViewHolder.this, getLayoutPosition());
-                }
-            });
+            if (mOptions.previewPhoto) {
+                LinearLayout llCheck = itemView.findViewById(R.id.ll_check);
+                llCheck.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        performClick(MediaContentViewHolder.this, getLayoutPosition());
+                    }
+                });
+            }
         }
     }
 

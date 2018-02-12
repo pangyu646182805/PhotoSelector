@@ -1,10 +1,14 @@
 package com.ppyy.photoselector;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -31,13 +35,16 @@ import com.ppyy.photoselector.compress.LuBanOptions;
 import com.ppyy.photoselector.conf.PhotoSelectorConfig;
 import com.ppyy.photoselector.loader.MediaLoader;
 import com.ppyy.photoselector.utils.DataTransferStation;
+import com.ppyy.photoselector.utils.FileUtils;
 import com.ppyy.photoselector.utils.LogUtils;
 import com.ppyy.photoselector.utils.PhotoGallery;
 import com.ppyy.photoselector.utils.SizeUtils;
 import com.ppyy.photoselector.utils.SpacesItemDecoration;
 import com.ppyy.photoselector.utils.StatusBarUtils;
+import com.ppyy.photoselector.widget.CustomDialog;
 import com.ppyy.photoselector.widget.SlidingUpPanelLayout;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -60,6 +67,10 @@ public class PhotoSelectorActivity extends AppCompatActivity implements MediaLoa
     private MediaFolderSpinner mFolderSpinner;
     private DataTransferStation mDataTransferStation;
     // private List<FileBean> mSelectedItems = new ArrayList<>();
+    private CustomDialog mLoadingDialog;
+    private String mCurrentPath;
+    // 是否重新加载媒体库
+    private boolean mRestartLoadMedia;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -181,15 +192,84 @@ public class PhotoSelectorActivity extends AppCompatActivity implements MediaLoa
         mMediaAdapter.setOnItemSelectedListener(new MediaAdapter.OnItemSelectedListener() {
             @Override
             public void onItemSelected(RecyclerView.ViewHolder viewHolder, int position, boolean isSelected, FileBean item) {
-                PhotoSelectorActivity.this.onItemSelected(isSelected, item);
+                PhotoSelectorActivity.this.onItemSelected(isSelected, item, position);
             }
         });
         mMediaAdapter.setOnItemClickListener(new MediaAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(RecyclerView.ViewHolder viewHolder, int position, FileBean fileBean) {
-                preview(mOptions.showHeaderItem ? position - 1 : position);
+                if (fileBean == null) {
+                    // 点击header拍照
+                    clickHeader();
+                } else {
+                    preview(mOptions.showHeaderItem ? position - 1 : position);
+                }
             }
         });
+    }
+
+    /**
+     * 点击了header拍照/拍视频/录音
+     */
+    private void clickHeader() {
+        switch (mOptions.mimeType) {
+            case MimeType.ALL:
+            case MimeType.PHOTO:
+                startTakePhoto();
+                break;
+            case MimeType.VIDEO:
+                startTakeVideo();
+                break;
+            case MimeType.AUDIO:
+                startTakeAudio();
+                break;
+        }
+    }
+
+    /**
+     * 开始拍照
+     */
+    private void startTakePhoto() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+            File cameraFile = FileUtils.createCameraFile(this, mOptions.mimeType == MimeType.ALL ?
+                    MimeType.PHOTO : mOptions.mimeType);
+            mCurrentPath = cameraFile.getAbsolutePath();
+            Uri imageUri = generateUri(cameraFile);
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+            cameraIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+            startActivityForResult(cameraIntent, PhotoSelectorConfig.REQUEST_CODE_CAMERA);
+        }
+    }
+
+    /**
+     * 开始拍视频
+     */
+    private void startTakeVideo() {
+
+    }
+
+    /**
+     * 开始录音
+     */
+    private void startTakeAudio() {
+
+    }
+
+    /**
+     * 生成Uri
+     */
+    private Uri generateUri(File cameraFile) {
+        Uri imageUri;
+        String authority = getPackageName() + ".provider";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            //通过FileProvider创建一个content类型的Uri
+            imageUri = FileProvider.getUriForFile(this, authority, cameraFile);
+        } else {
+            imageUri = Uri.fromFile(cameraFile);
+        }
+        return imageUri;
     }
 
     /**
@@ -209,13 +289,15 @@ public class PhotoSelectorActivity extends AppCompatActivity implements MediaLoa
      * @param isSelected 是否被勾选
      * @param item       item实体类
      */
-    private void onItemSelected(boolean isSelected, FileBean item) {
+    private void onItemSelected(boolean isSelected, FileBean item, int position) {
         if (isSelected) {
+            LogUtils.e("position --> " + position + " 被选中 --> " + item.getPath());
             mDataTransferStation.putSelectedItem(item);
             if (mSlidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED) {
                 mSlidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
             }
         } else {
+            LogUtils.e("position --> " + position + " 取消选中 --> " + item.getPath());
             mDataTransferStation.removeFromSelectedItems(item);
         }
         invalidateOptionsMenu();
@@ -254,23 +336,43 @@ public class PhotoSelectorActivity extends AppCompatActivity implements MediaLoa
         if (resultCode != RESULT_OK)
             return;
 
-        if (requestCode == PhotoSelectorConfig.REQUEST_CODE_PREVIEW) {
-            if (data != null) {
-                ArrayList<FileBean> selectedItems = mDataTransferStation.getSelectedItems();
-                if (data.getBooleanExtra(PhotoSelectorConfig.EXTRA_RESULT_APPLY, false)) {
-                    // 发送出去
-                    handleResult(selectedItems);
-                } else {
-                    if (!mDataTransferStation.getSelectedItems().isEmpty()) {
-                        if (mSlidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED) {
-                            mSlidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+        switch (requestCode) {
+            case PhotoSelectorConfig.REQUEST_CODE_PREVIEW:
+                if (data != null) {
+                    ArrayList<FileBean> selectedItems = mDataTransferStation.getSelectedItems();
+                    if (data.getBooleanExtra(PhotoSelectorConfig.EXTRA_RESULT_APPLY, false)) {
+                        // 发送出去
+                        handleResult(selectedItems);
+                    } else {
+                        if (!mDataTransferStation.getSelectedItems().isEmpty()) {
+                            if (mSlidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED) {
+                                mSlidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+                            }
                         }
+                        mSlidingUpPanelLayout.setTouchEnabled(mDataTransferStation.getSelectedItems().isEmpty());
+                        mMediaAdapter.resetSelectedStates(selectedItems);
+                        invalidateOptionsMenu();
                     }
-                    mSlidingUpPanelLayout.setTouchEnabled(mDataTransferStation.getSelectedItems().isEmpty());
-                    mMediaAdapter.notifyDataSetChanged();
-                    invalidateOptionsMenu();
                 }
-            }
+                break;
+            case PhotoSelectorConfig.REQUEST_CODE_CAMERA:
+                /*final File file = new File(mCurrentPath);
+                LogUtils.i("mCurrentPath : " + mCurrentPath);
+                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
+                String mimeTypeByFile = MimeType.getMimeTypeByFile(file);
+                FileBean fileBean = new FileBean();
+                fileBean.setPath(mCurrentPath);
+                fileBean.setTitle(file.getName());
+                fileBean.setSize(file.length());
+                fileBean.setMediaMimeType(mOptions.mimeType);
+                fileBean.setMimeType(mimeTypeByFile);
+                fileBean.setDateTaken(file.lastModified());
+                fileBean.setDateModified(file.lastModified());
+                mMediaAdapter.putFileBean(0, fileBean);*/
+
+                mRestartLoadMedia = true;
+                mMediaLoader.restartLoadMedia();
+                break;
         }
     }
 
@@ -283,6 +385,7 @@ public class PhotoSelectorActivity extends AppCompatActivity implements MediaLoa
     }
 
     private void compressImage(final ArrayList<FileBean> selectedItems) {
+        showDialog();
         CompressConfig compressConfig = CompressConfig.ofDefaultConfig();
         switch (mOptions.compressMode) {
             case PhotoSelectorConfig.SYSTEM_COMPRESS_MODE:
@@ -317,6 +420,23 @@ public class PhotoSelectorActivity extends AppCompatActivity implements MediaLoa
                 }).compress();
     }
 
+    private void showDialog() {
+        if (!isFinishing()) {
+            if (mLoadingDialog == null) mLoadingDialog = new CustomDialog(this);
+            if (!mLoadingDialog.isShowing()) mLoadingDialog.show();
+        }
+    }
+
+    private void dismissDialog() {
+        try {
+            if (!isFinishing() && mLoadingDialog != null && mLoadingDialog.isShowing()) {
+                mLoadingDialog.dismiss();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void onResult(ArrayList<FileBean> selectedItems) {
         Intent result = new Intent();
         result.putParcelableArrayListExtra(PhotoSelectorConfig.EXTRA_RESULT_SELECTED_ITEMS, selectedItems);
@@ -338,6 +458,7 @@ public class PhotoSelectorActivity extends AppCompatActivity implements MediaLoa
                 hideAppBarLayout();
             } else {
                 LogUtils.e("onBackPressed");
+                dismissDialog();
                 super.onBackPressed();
             }
         }
@@ -347,8 +468,16 @@ public class PhotoSelectorActivity extends AppCompatActivity implements MediaLoa
     public void onLoadFinished(ArrayList<FileBean> mediaList, ArrayList<FolderBean> folderList) {
         // 将数据存入临时的数据存储点
         mDataTransferStation.putItems(mediaList);
-        ArrayList<FileBean> selectedItems = mOptions.selectedItems;
-        mDataTransferStation.putSelectedItems(selectedItems);
+        mDataTransferStation.putSelectedItems(mOptions.selectedItems);
+        if (mRestartLoadMedia) {
+            if (mediaList != null && !mediaList.isEmpty()) {
+                FileBean fileBean = mediaList.get(0);
+                LogUtils.e("刚刚添加的FileBean : " + fileBean.getPath());
+                mDataTransferStation.putSelectedItem(fileBean);
+            }
+            mRestartLoadMedia = false;
+        }
+        ArrayList<FileBean> selectedItems = mDataTransferStation.getSelectedItems();
 
         if (selectedItems != null && !selectedItems.isEmpty()) {
             showAppBarLayout();
@@ -357,6 +486,7 @@ public class PhotoSelectorActivity extends AppCompatActivity implements MediaLoa
         }
 
         mMediaAdapter.setMediaList(mediaList);
+        mMediaAdapter.resetSelectedStates(selectedItems);
         mFolderSpinner.swapFolderList(folderList);
         invalidateOptionsMenu();
     }
@@ -385,7 +515,7 @@ public class PhotoSelectorActivity extends AppCompatActivity implements MediaLoa
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_selector, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -405,6 +535,7 @@ public class PhotoSelectorActivity extends AppCompatActivity implements MediaLoa
     @Override
     protected void onDestroy() {
         mMediaLoader.onDestroy();
+        dismissDialog();
         if (mDataTransferStation != null) {
             mDataTransferStation.onDestroy();
             mDataTransferStation = null;
@@ -423,6 +554,7 @@ public class PhotoSelectorActivity extends AppCompatActivity implements MediaLoa
             ArrayList<FileBean> fileList = folderBean.getFileList();
             if (null != fileList) {
                 mMediaAdapter.setMediaList(fileList);
+                mDataTransferStation.putItems(fileList);
             }
         }
     }

@@ -55,7 +55,7 @@ public class PhotoLoader {
         return songs;
     }
 
-    private static FileBean getPhotoFromCursorImpl(Cursor cursor) {
+    public static FileBean getPhotoFromCursorImpl(Cursor cursor) {
         FileBean photoBean = new FileBean();
         photoBean.setId(cursor.getInt(cursor.getColumnIndex(BaseColumns._ID)));
         photoBean.setTitle(cursor.getString(cursor.getColumnIndex(MediaStore.Images.ImageColumns.TITLE)));

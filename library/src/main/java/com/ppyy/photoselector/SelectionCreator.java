@@ -65,6 +65,14 @@ public final class SelectionCreator {
     }
 
     /**
+     * 是否需要点击预览图片
+     */
+    public SelectionCreator previewPhoto(boolean previewPhoto) {
+        mOptions.previewPhoto = previewPhoto;
+        return this;
+    }
+
+    /**
      * 是否展示gif图片
      */
     public SelectionCreator showGif(boolean showGif) {

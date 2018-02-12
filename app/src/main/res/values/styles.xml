@@ -8,6 +8,14 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <!--在无需多点触控的页面上，建议关闭多点触控-->
+        <item name="android:splitMotionEvents">false</item>
+    </style>
+
     <style name="PhotoSelectorTheme.BiliBiliPink" parent="PhotoSelectorTheme">
         <item name="colorPrimary">#f68fa2</item>
         <item name="colorPrimaryDark">#f68fa2</item>

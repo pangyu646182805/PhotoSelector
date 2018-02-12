@@ -924,7 +924,7 @@ public class ViewDragHelper {
      * @param pointerId Pointer to capture with
      * @return true if capture was successful
      */
-    boolean tryCaptureViewForDrag(View toCapture, int pointerId) {
+    private boolean tryCaptureViewForDrag(View toCapture, int pointerId) {
         if (toCapture == mCapturedView && mActivePointerId == pointerId) {
             // Already done!
             return true;

@@ -22,6 +22,7 @@ public class SelectionOptions {
     public int maxSelectable = 1;  // 最多选择数量
     public int gridSize = 3;  // RecyclerView显示网格大小
     public boolean supportDarkStatusBar;  // 是否支持暗色状态栏
+    public boolean previewPhoto;  // 是否需要点击预览图片
     public boolean showGif;  // 是否显示gif图片
     public boolean showGifFlag;  // 是否显示gif标志
     @DrawableRes
@@ -56,6 +57,7 @@ public class SelectionOptions {
         maxSelectable = 1;
         gridSize = 3;
         supportDarkStatusBar = false;
+        previewPhoto = false;
         showGif = false;
         showGifFlag = false;
         gifFlagResId = R.drawable.ic_gif_flag;

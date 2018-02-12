@@ -41,6 +41,10 @@ public class MediaLoader implements LoaderManager.LoaderCallbacks<ArrayList<File
         mLoaderManager.initLoader(LOADER_ID, null, this);
     }
 
+    public void restartLoadMedia() {
+        mLoaderManager.restartLoader(LOADER_ID, null, this);
+    }
+
     @Override
     public Loader<ArrayList<FileBean>> onCreateLoader(int id, Bundle args) {
         Context context = mContext.get();

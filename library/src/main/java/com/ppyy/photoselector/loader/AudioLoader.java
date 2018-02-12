@@ -37,7 +37,7 @@ public class AudioLoader {
         return songs;
     }
 
-    private static FileBean getAudioFromCursorImpl(Cursor cursor) {
+    public static FileBean getAudioFromCursorImpl(Cursor cursor) {
         FileBean audioBean = new FileBean();
         audioBean.setId(cursor.getInt(cursor.getColumnIndex(BaseColumns._ID)));
         audioBean.setTitle(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.TITLE)));

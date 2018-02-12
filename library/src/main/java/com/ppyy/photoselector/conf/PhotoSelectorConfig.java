@@ -6,6 +6,7 @@ package com.ppyy.photoselector.conf;
 
 public class PhotoSelectorConfig {
     public static final int REQUEST_CODE_PREVIEW = 23;
+    public static final int REQUEST_CODE_CAMERA = 24;
 
     public static String DEFAULT_CACHE_DIR = "picture_cache";
 
