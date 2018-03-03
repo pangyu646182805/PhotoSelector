@@ -11,4 +11,4 @@ A local mediaselector for Android(一款本地图片/视频/音频选择器)
 
 一些截图：
 
-<img src="https://github.com/pangyu646182805/PhotoSelector/blob/master/a.png" width = "144" height = "256" alt="a" align=center /> <img src="https://github.com/pangyu646182805/PhotoSelector/blob/master/b.png" width = "144" height = "256" alt="b" align=center /> <img src="https://github.com/pangyu646182805/PhotoSelector/blob/master/c.png" width = "144" height = "256" alt="c" align=center /> <img src="https://github.com/pangyu646182805/PhotoSelector/blob/master/d.png" width = "144" height = "256" alt="d" align=center />
+<img src="https://github.com/pangyu646182805/PhotoSelector/blob/master/a.png" width = "216" height = "384" alt="a" align=center /> <img src="https://github.com/pangyu646182805/PhotoSelector/blob/master/b.png" width = "216" height = "384" alt="b" align=center /> <img src="https://github.com/pangyu646182805/PhotoSelector/blob/master/c.png" width = "216" height = "384" alt="c" align=center /> <img src="https://github.com/pangyu646182805/PhotoSelector/blob/master/d.png" width = "216" height = "384" alt="d" align=center />
